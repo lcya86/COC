@@ -12,7 +12,7 @@ from models import Corporation
 from reply.models import Reply
 from reply.forms import NewReplyForm
 from topic.models import Topic
-from topic.forms import NewTopicForm
+from topic.forms import NewTopicForm, ModifyTopicForm
 from relations.models import S_C_Card
 from django.template import RequestContext
 from mongoengine.django.sessions import MongoSession
@@ -27,7 +27,7 @@ def creat_corporation(request):
             introduction = form.cleaned_data['introduction']
             birthyear = form.cleaned_data['birthyear']
             school = form.cleaned_data['school']
-            corporation = Corporation(name=name, introduction=introduction, school=school, birthyear=birthyear, logo=STATIC_URL + 'img/face.png')
+            corporation = Corporation(name=name, introduction=introduction, school=school, birthyear=birthyear, logo=STATIC_URL + 'img/face.png', thumbnail=STATIC_URL + 'img/face.png')
             url_number = len(Corporation.objects) + 1
             corporation.url_number = url_number
             corporation.creat_time = datetime.datetime.now()
@@ -94,27 +94,39 @@ def quitcorporation(request, url_number):
 def showtopic(request, gurl_number, turl_number):
     corporation = Corporation.objects(url_number=gurl_number).get()
     topic = Topic.objects(url_number=turl_number).get()
-    topic.clicks += 1
-    topic.save()
     if request.method == 'POST':
-        form = NewReplyForm(request.POST)
-        if form.is_valid():
-            content = form.cleaned_data['content']
-            reply = Reply(content=content)
-            sccard = S_C_Card.objects(user=request.user, corporation=corporation).get()
-            reply.creator = sccard
-            reply.creat_time = datetime.datetime.now()
-            reply.target = topic
-            reply.is_active = True
-            reply.save()
-            topic.update_author = request.user
-            topic.update_time = datetime.datetime.now()
-            topic.save()
-            return HttpResponseRedirect('/corporation/' + str(gurl_number) + '/topic/' + str(turl_number) + '/')
+        if "reply" in request.POST:
+            reply_form = NewReplyForm(request.POST)
+            if reply_form.is_valid():
+                content = reply_form.cleaned_data['content']
+                reply = Reply(content=content)
+                sccard = S_C_Card.objects(user=request.user, corporation=corporation).get()
+                reply.creator = sccard
+                reply.creat_time = datetime.datetime.now()
+                reply.target = topic
+                reply.is_active = True
+                reply.save()
+                topic.update_author = request.user
+                topic.update_time = datetime.datetime.now()
+                topic.clicks = topic.clicks - 1
+                topic.save()
+                return HttpResponseRedirect('/corporation/' + str(gurl_number) + '/topic/' + str(turl_number) + '/')
+            
+        if "modify" in request.POST:
+            modify_form = ModifyTopicForm(request.POST)
+            if modify_form.is_valid():
+                content = modify_form.cleaned_data['content']
+                topic.content = content
+                topic.clicks = topic.clicks - 1
+                topic.save()
+                return HttpResponseRedirect('/corporation/' + str(gurl_number) + '/topic/' + str(turl_number) + '/')
         
     else:
-        form = NewReplyForm()
-        return render_to_response('corporation/topic_corporation.html', {'corporation':corporation, 'current_user':request.user, 'form':form, 'topic':topic, 'STATIC_URL':STATIC_URL}, context_instance=RequestContext(request))
+        reply_form = NewReplyForm()
+        modify_form = ModifyTopicForm()
+        topic.clicks = topic.clicks + 1
+        topic.save()
+        return render_to_response('corporation/topic_corporation.html', {'corporation':corporation, 'current_user':request.user, 'reply_form':reply_form, 'topic':topic, 'STATIC_URL':STATIC_URL}, context_instance=RequestContext(request))
 
     
 def my_corporations_creat(request):
@@ -293,7 +305,9 @@ def cancle_watch_corporation(request, url_number):
     return HttpResponse('success')
     
     
-    
+def topic_inactive(request, url_number):
+    corporation = Corporation.objects(url_number=url_number).get()
+    return render_to_response('corporation/corporation_topics_inactive.html',{'current_user':request.user, 'url_number':url_number, 'corporation':corporation, 'STATIC_URL':STATIC_URL}, context_instance=RequestContext(request))
     
     
     

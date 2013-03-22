@@ -19,6 +19,7 @@ urlpatterns = patterns('',
     # url(r'^people/', include('accounts.urls')),
     url(r'^group/', include('group.urls')),
     url(r'^corporation/',include('corporation.urls')),
+    url(r'^topic/',include('topic.urls')),
     # url(r'^find/'),
     
 

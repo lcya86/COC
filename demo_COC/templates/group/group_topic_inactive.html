@@ -6,11 +6,11 @@
 	<div class="row-fluid">
 		<div>
 			<div class="pull-right">
-				<button class="btn btn-info">
-					全部恢复
+				<button class="btn btn-link pull-right">
+					-全部恢复
 				</button>
-				<button class="btn btn-danger">
-					全部删除
+				<button class="btn btn-link pull-right">
+					-全部删除
 				</button>
 			</div>
 		</div>
@@ -31,7 +31,7 @@
 		<tbody>
 			{%for topic in group.get_topic_inactive%}
 			<tr>
-				<td><a href="/group/{{group.url_number}}/topic/{{topic.url_number}}/">{{topic.title}}</a></td>
+				<td><a title="{{topic.title}}" href="/group/{{group.url_number}}/topic/{{topic.url_number}}/">{{topic.title}}</a></td>
 				<td>{{topic.get_reply.count}}/{{topic.clicks}}</td>
 				<td>{{topic.update_time|date:"Y-m-d H:i:s"}}</td>
 				<td><a href="/people/{{topic.creator.user.url_number}}/">{{topic.creator.user.public_profile.realname}}</a></td>

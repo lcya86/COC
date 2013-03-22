@@ -5,7 +5,7 @@ from PIL import Image
 from django.shortcuts import render_to_response
 from django.core.context_processors import csrf
 from demo_COC.settings import STATIC_URL, MEDIA_ROOT, MEDIA_URL
-from models import Student, Public_Profile
+from models import Student, Public_Profile, Feeds
 from relations.models import S_S_Card
 from django.http import HttpResponseRedirect
 from django.contrib.auth import *
@@ -28,7 +28,7 @@ def indexsignup(request):
         student = Student.create_user(username=email, email=email, password=password)
         url_number = len(Student.objects)
         student.url_number = url_number
-        public_profile = Public_Profile(realname=realname, gender=gender, face=STATIC_URL + 'img/face.png')
+        public_profile = Public_Profile(realname=realname, gender=gender, face=STATIC_URL + 'img/face.png', thumbnail=STATIC_URL + 'img/face.png')
         
         student.public_profile = public_profile
         
@@ -126,10 +126,8 @@ def index(request):
                 form = NewFeedForm(request.POST)
                 if form.is_valid():
                     content = form.cleaned_data['content']
-                    #feed = Feed(content=content)
-                    #feed.creat_time = datetime.datetime.now()
-                    #current_user.update(push__feeds=feed)
-                    return HttpResponseRedirect('/people/'+request.user.url_number+'/')
+                    feed = Feeds(user=request.user, content=content, creat_time=datetime.datetime.now()).save()
+                    return HttpResponseRedirect('/')
                     
             else:
                 form = NewFeedForm()

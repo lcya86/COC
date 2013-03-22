@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 from mongoengine.django.auth import User
-from mongoengine import fields, EmbeddedDocument
+from mongoengine import fields, EmbeddedDocument, Document, signals
 
 
 
@@ -22,6 +22,7 @@ class Private_Profile(EmbeddedDocument):
 class Broadcast(EmbeddedDocument):
     object = fields.GenericReferenceField()
     is_readed = fields.BooleanField()
+
 
 class Student(User):
     url_number = fields.IntField()
@@ -248,6 +249,10 @@ class Student(User):
                 user.update(push__allbroadcast=broadcast)
         elif sender == Activity:
             document.creator.corporation.who_watches.update(push__allbroadcast=broadcast)
+        elif sender == Feeds:
+            for user in document.user.get_fans():
+                user.update(push__allbroadcast=broadcast)
+            document.user.update(push__allbroadcast=broadcast)
             
     @classmethod
     def add_alert_sitemail(cls, sender, document, **kwargs):
@@ -269,6 +274,21 @@ class Student(User):
     
     def get_alerts_length(self):
         return len(self.alerts)
+    
+class Feeds(Document):
+    user = fields.ReferenceField(Student)
+    content = fields.StringField()
+    creat_time = fields.DateTimeField()
+    
+    def description(self):
+        return self.content
+    
+
+signals.post_save.connect(Student.add_to_allbroadcast, sender=Feeds)
+signals.post_save.connect(Student.add_to_mybroadcast, sender=Feeds)
+    
+    
+    
     
     
     

@@ -2154,9 +2154,9 @@ table td[class*="span"], table th[class*="span"], .row-fluid table td[class*="sp
 	-webkit-border-radius: 8px;
 	-moz-border-radius: 8px;
 	border-radius: 8px;
-	-webkit-box-shadow: 1px 1px 10px #b3b3b3;
-	-moz-box-shadow: 1px 1px 10px #b3b3b3;
-	box-shadow: 1px 1px 10px #b3b3b3;
+	-webkit-box-shadow: 5px 5px 15px black;
+	-moz-box-shadow: 5px 5px 15px black;
+	box-shadow: 5px 5px 15px black;
 }
 .well blockquote {
 	border-color: #ddd;
