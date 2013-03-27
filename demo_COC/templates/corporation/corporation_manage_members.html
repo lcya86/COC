@@ -59,6 +59,28 @@
 	<h2>您的社团还没有成员</h2>
 	{%endif%}
 </div>
+<h2>&nbsp;</h2>
+<p align="left" style="color: green">未批准的申请...</p>
+<div id="asks">
+	{%if corporation.get_user_inactive%}
+	<ul class="thumbnails">
+		{%for user in corporation.get_user_inactive%}
+		<li class="span4 {%cycle 'removemarginleft' '' ''%}">
+			<div class="span6">
+				<a href="/people/{{user.url_number}}/"> <img class="img-polaroid span10" src="{{user.public_profile.thumbnail}}"></a>
+			</div>
+			<div class="media-body">
+				<h4 class="media-heading">{{user.public_profile.realname}}</h4>
+				<button class="btn btn-mini" id="approve_{{user.url_number}}">批准申请</button>
+				<button class="btn btn-mini" id="delete_{{user.url_number}}">删除申请</button>
+			</div>
+		</li>
+		{%endfor%}
+	</ul>
+	{%else%}
+	<h2>没有未批准的申请</h2>
+	{%endif%}
+</div>
 {%endblock%}
 
 
@@ -66,7 +88,7 @@
 <script type="text/javascript" src="{{STATIC_URL}}js/csrf.js"></script>
 <script type="text/javascript">
 $().ready(function(){
-	{%for user in corporation.get_member_list%}
+	{%for user in corporation.get_user_not_admin%}
 	$('#promote_{{user.url_number}}').live('click',function () {
 		$.post("{%url corporation.views.promote corporation.url_number user.url_number%}",
 		function () {
@@ -74,16 +96,18 @@ $().ready(function(){
 			$('#admins').load(location.href+' #admins>*');
 			$('#admin_list').load(location.href+' #admin_list>*');
 			$('#member_list').load(location.href+' #member_list>*');
+			$('#asks').load(location.href+' #asks>*');
 		});
 	});
 	
 	$('#kick_out_{{user.url_number}}').live('click',function () {
-		$.post("{%url corporation.views.kick_out corporation.url_number user.url_number%}",
+		$.post("{%url corporation.views.delete corporation.url_number user.url_number%}",
 		function () {
 			$('#members').load(location.href+' #members>*');
 			$('#admins').load(location.href+' #admins>*');
 			$('#admin_list').load(location.href+' #admin_list>*');
 			$('#member_list').load(location.href+' #member_list>*');
+			$('#asks').load(location.href+' #asks>*');
 		});
 	});
 	{%endfor%}
@@ -95,6 +119,30 @@ $().ready(function(){
 			$('#members').load(location.href+' #members>*');
 			$('#admin_list').load(location.href+' #admin_list>*');
 			$('#member_list').load(location.href+' #member_list>*');
+			$('#asks').load(location.href+' #asks>*');
+		});
+	});
+	{%endfor%}
+	{%for user in corporation.get_user_inactive%}
+	$('#approve_{{user.url_number}}').live('click',function () {
+		$.post("{%url corporation.views.approve corporation.url_number user.url_number%}",
+		function () {
+			$('#members').load(location.href+' #members>*');
+			$('#admins').load(location.href+' #admins>*');
+			$('#admin_list').load(location.href+' #admin_list>*');
+			$('#member_list').load(location.href+' #member_list>*');
+			$('#asks').load(location.href+' #asks>*');
+		});
+	});
+	
+	$('#delete_{{user.url_number}}').live('click',function () {
+		$.post("{%url corporation.views.delete corporation.url_number user.url_number%}",
+		function () {
+			$('#members').load(location.href+' #members>*');
+			$('#admins').load(location.href+' #admins>*');
+			$('#admin_list').load(location.href+' #admin_list>*');
+			$('#member_list').load(location.href+' #member_list>*');
+			$('#asks').load(location.href+' #asks>*');
 		});
 	});
 	{%endfor%}

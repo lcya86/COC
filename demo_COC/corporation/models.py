@@ -61,7 +61,9 @@ class Corporation(Document):
         
             
     #申请加入社团
-    def entercorporation(self, user):
+    def entercorporation(self, user_url_number):
+        from accounts.models import Student
+        user = Student.objects(url_number=user_url_number).get()
         from relations.models import S_C_Card
         if self.get_user_admin():
             if S_C_Card.objects(user=user, corporation=self):
@@ -75,7 +77,9 @@ class Corporation(Document):
                 S_C_Card(user=user, corporation=self, is_active=True, is_admin=True, creat_time=datetime.datetime.now()).save()
         
     #退出社团
-    def quitcorporation(self, user):
+    def quitcorporation(self, user_url_number):
+        from accounts.models import Student
+        user = Student.objects(url_number=user_url_number).get()
         from relations.models import S_C_Card
         S_C_Card.objects(user=user, corporation=self, is_active=True).update(set__is_active=False)
         

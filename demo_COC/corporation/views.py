@@ -13,11 +13,13 @@ from reply.models import Reply
 from reply.forms import NewReplyForm
 from topic.models import Topic
 from topic.forms import NewTopicForm, ModifyTopicForm
-from relations.models import S_C_Card
+from relations.models import S_C_Card, S_S_Card
 from django.template import RequestContext
 from mongoengine.django.sessions import MongoSession
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseNotFound
+from sitemail.forms import NewAskForm
+from sitemail.models import Sitemail
 
 def creat_corporation(request):
     if request.method == "POST":
@@ -79,18 +81,6 @@ def creat_corporation(request):
                 
                  
 
-    
-def entercorporation(request, url_number):
-    corporation = Corporation.objects(url_number=url_number).get()
-    corporation.entercorporation(request.user)
-    return HttpResponse('success')
-    
-def quitcorporation(request, url_number):
-    corporation = Corporation.objects(url_number=url_number).get()
-    corporation.quitcorporation(request.user)
-    return HttpResponse('success')
-    
-    
 def showtopic(request, gurl_number, turl_number):
     corporation = Corporation.objects(url_number=gurl_number).get()
     topic = Topic.objects(url_number=turl_number).get()
@@ -285,7 +275,49 @@ def visit_corporation_topics(request, gurl_number):
         
 def visit_corporation_structure(request, url_number):
     corporation = Corporation.objects(url_number=url_number).get()
-    return render_to_response('corporation/corporation_structure.html', {'current_user':request.user, 'url_number':url_number, 'corporation':corporation, 'STATIC_URL':STATIC_URL}, context_instance=RequestContext(request))
+    if request.method == "POST":
+        form = NewAskForm(request.POST)
+        if form.is_valid():
+            content = form.cleaned_data['content']
+            creator = [a[0] for a in [S_S_Card.objects.get_or_create(user=request.user, target=admin) for admin in corporation.get_user_admin()]]
+            url_number = len(Sitemail.objects) + 1
+            mail = Sitemail(title='入社申请', content=content, creator=creator, creat_time=datetime.datetime.now(), is_readed=False, url_number=url_number).save()
+            S_C_Card(user=request.user,corporation=corporation,is_active=False,is_admin=False).save()
+            return HttpResponse('success')
+            
+            
+    else:
+        form = NewAskForm()
+        return render_to_response('corporation/corporation_structure.html', {'form':form,'current_user':request.user, 'url_number':url_number, 'corporation':corporation, 'STATIC_URL':STATIC_URL}, context_instance=RequestContext(request))
+
+  
+
+def delete(request,corporation_url_number,user_url_number):
+    from accounts.models import Student
+    corporation = Corporation.objects(url_number=corporation_url_number).get()
+    user = Student.objects(url_number=user_url_number).get()
+    S_C_Card.objects(user=user, corporation=corporation).delete()
+    return HttpResponse('success')
+    
+def approve(request,corporation_url_number,user_url_number):
+    corporation = Corporation.objects(url_number=corporation_url_number).get()
+    corporation.entercorporation(user_url_number)
+    return HttpResponse('success')
+      
+def ask_quitcorporation(request, url_number):
+    corporation = Corporation.objects(url_number=url_number).get()
+    if request.method == "POST":
+        form = NewAskForm(request.POST)
+        if form.is_valid():
+            content = form.cleaned_data['content']
+            creator = S_S_Card.objects.get_or_create(user=request.user, target__in=corporation.get_user_admin)
+            url_number = len(Sitemail.objects) + 1
+            mail = Sitemail(title='退社申请', content=content, creator=creator, creat_time=datetime.datetime.now(), is_readed=False, url_number=url_number).save()
+            return HttpResponse('success')
+        
+    else:
+        return HttpResponse('success')
+    
 
 def visit_corporation_activity(request, url_number):
     corporation = Corporation.objects(url_number=url_number).get()

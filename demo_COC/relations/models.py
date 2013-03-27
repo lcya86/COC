@@ -6,8 +6,8 @@ from group.models import Group
 from accounts.models import Student
 # Create your models here.
 class S_S_Card(Document):
-    user = fields.ReferenceField(Student, reverse_delete_rule=CASCADE)
-    target = fields.ReferenceField(Student, reverse_delete_rule=CASCADE)
+    user = fields.ReferenceField(Student, reverse_delete_rule=CASCADE ,required=True)
+    target = fields.ReferenceField(Student, reverse_delete_rule=CASCADE,required=True)
     
     def description(self):
         return self.user.public_profile.realname + "关注了" + self.target.public_profile.realname

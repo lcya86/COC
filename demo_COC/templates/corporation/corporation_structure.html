@@ -19,19 +19,21 @@
 {%if corporation.departments%}
 	{%for department in corporation.departments%}
 		<div class="row-fluid">
-			<h4>{{department}}</h4>
+			<h4>{{department}}:</h4>
 			<div class="row-fluid">
-				{%if department.member%}
+				{%if department%}
 					<ul class="thumbnails">
-						{%for user in department.member%}
+						{%for sccard in corporation.get_sccard_active%}
+						{%if sccard.department == department%}
 						<li class="span4 {%cycle 'removemarginleft' '' ''%}">
 							<div class="span6">
-								<a href="/people/{{user.url_number}}/"> <img class="img-polaroid span10" src="{{user.public_profile.thumbnail}}"></a>
+								<a href="/people/{{sccard.user.url_number}}/"> <img class="img-polaroid span10" src="{{sccard.user.public_profile.thumbnail}}"></a>
 							</div>
 							<div class="media-body">
 								<h4 class="media-heading">{{sccard.user.public_profile.realname}}</h4>
 							</div>
 						</li>
+						{%endif%}
 						{%endfor%}
 					</ul>
 				{%else%}

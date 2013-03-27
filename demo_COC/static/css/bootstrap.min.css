@@ -2154,9 +2154,9 @@ table td[class*="span"], table th[class*="span"], .row-fluid table td[class*="sp
 	-webkit-border-radius: 8px;
 	-moz-border-radius: 8px;
 	border-radius: 8px;
-	-webkit-box-shadow: 5px 5px 15px black;
-	-moz-box-shadow: 5px 5px 15px black;
-	box-shadow: 5px 5px 15px black;
+	-webkit-box-shadow: 1px 1px 15px rgb(150, 150, 150);
+	-moz-box-shadow: 1px 1px 15px rgb(150, 150, 150);
+	box-shadow: 1px 1px 15px rgb(150, 150, 150);
 }
 .well blockquote {
 	border-color: #ddd;
@@ -3246,9 +3246,9 @@ button.btn.btn-mini, input[type="submit"].btn.btn-mini {
 	top: 0
 }
 .navbar-fixed-top .navbar-inner, .navbar-static-top .navbar-inner {
-	-webkit-box-shadow: 0 1px 10px rgba(0,0,0,0.1);
-	-moz-box-shadow: 0 1px 10px rgba(0,0,0,0.1);
-	box-shadow: 0 1px 10px rgba(0,0,0,0.1)
+	-webkit-box-shadow: 0 1px 10px rgba(0,0,0,0.2);
+	-moz-box-shadow: 0 1px 10px rgba(0,0,0,0.2);
+	box-shadow: 0 1px 10px rgba(0,0,0,0.2)
 }
 .navbar-fixed-bottom {
 	bottom: 0

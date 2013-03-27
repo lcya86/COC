@@ -23,7 +23,7 @@
 		<style type="text/css">
 			body {
 				padding-top: 80px;
-				background-image:url({{STATIC_URL}}img/Patterrific_DamagedWood04.jpg);
+				background-image:url({{STATIC_URL}}img/escheresque.png);
 			}
 		</style>
         {%block othercss%}{%endblock%}
@@ -75,11 +75,11 @@
                                         
 										<ul class="dropdown-menu">
 											<li>
-												<a tabindex="-1" href="/logout/">注销</a>
+												<a tabindex="-1" href="/sitemail/inbox/">收件箱</a>
                                                 
 											</li>
                                             <li>
-                                            	<a tabindex="0" href="/edit_profile/">修改资料</a>
+                                            	<a tabindex="0" href="/sitemail/sendmail/">写信</a>
                                             </li>
 										</ul>
 									</li>
@@ -90,13 +90,6 @@
 										</a>
                                         
 										<ul class="dropdown-menu">
-											<li>
-												<a tabindex="-1" href="/logout/">注销</a>
-                                                
-											</li>
-                                            <li>
-                                            	<a tabindex="0" href="/edit_profile/">修改资料</a>
-                                            </li>
 										</ul>
 									</li>
 									{%endif%}

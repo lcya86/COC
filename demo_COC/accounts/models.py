@@ -37,21 +37,23 @@ class Student(User):
     
     
     def get_fans(self):
-        from relations.models import S_S_Card
-        return S_S_Card.objects(target=self).scalar('user')
+        return self.get_sscard_as_target().scalar('user')
     
     def get_watchpeople(self):
-        from relations.models import S_S_Card
-        return S_S_Card.objects(user=self).scalar('target')
+        return self.get_sscard_as_user().scalar('target')
     
     
     #############################################################对关系卡 的操作#########################################################
     
     
     ###################################################对SS卡 的操作
-    def get_sscard_all(self):
+    def get_sscard_as_user(self):
         from relations.models import S_S_Card
         return S_S_Card.objects(user=self)
+    
+    def get_sscard_as_target(self):
+        from relations.models import S_S_Card
+        return S_S_Card.objects(target=self)
     
     
     ###################################################对SG卡 的操作
@@ -223,8 +225,14 @@ class Student(User):
         from reply.models import Reply
         return Reply.objects(creator__in=self.get_sccard_all(), is_active=True).distinct('target')
 
+    ###################################################对sitemail的操作
+    def get_inbox(self):
+        from sitemail.models import Sitemail
+        return Sitemail.objects(creator__in=self.get_sscard_as_target())
 
-
+    def get_outbox(self):
+        from sitemail.models import Sitemail
+        return Sitemail.objects(creator__in=self.get_sscard_as_user())
 
 
 
