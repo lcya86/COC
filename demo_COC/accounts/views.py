@@ -227,6 +227,3 @@ def cancle_watch_student(request, url_number):
     student = Student.objects(url_number=url_number).get()
     S_S_Card.objects(user=current_user, target=student).delete()
     return HttpResponse('success')
-
-
-

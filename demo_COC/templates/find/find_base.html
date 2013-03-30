@@ -1,5 +1,5 @@
 {%extends "base.html"%}
-{%block title%}首页{%endblock%}
+{%block title%}发现{%endblock%}
 {%block nav%}
 <li>
 	<a href="/">广播</a>
@@ -18,24 +18,14 @@
 </li>
 {%endblock%}
 {%block container%}
-<div class="container">
-	<div class="row-fluid">
-		<div class="span8 well">
-			{%block leftspan6%}
+<div class="row-fluid">
+	<div class="span8 offset2 well">
+		<ul class="nav nav-tabs" id="myTab">
+			{%block tab%}
 			{%endblock%}
-		</div>
-		<div class="span4">
-			<div class="row-fluid">
-				<div class="span1">
-					&nbsp;
-				</div>
-				<div class="span11 well">
-					{%block rightspan3%}
-					{%endblock%}
-				</div>
-			</div>
-		</div>
+		</ul>
+		{%block box%}
+		{%endblock%}
 	</div>
-</div>
 </div>
 {%endblock%}

@@ -23,6 +23,10 @@ def outbox(request):
 
 def showmail(request, url_number):
     mail = Sitemail.objects(url_number=url_number).get()
+    if request.user in [a.target for a in mail.creator]:
+        mail.is_readed = True
+        mail.save()
+        
     if request.method == "POST":
         form = NewReplyForm(request.POST)
         if form.is_valid():

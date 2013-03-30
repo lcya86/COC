@@ -20,6 +20,6 @@ urlpatterns = patterns('',
     url(r'^corporation/',include('corporation.urls')),
     url(r'^topic/',include('topic.urls')),
     url(r'^sitemail/',include('sitemail.urls')),
-    #url(r'^find/',include('find.urls')),
+    url(r'^find/',include('find.urls')),
 )
 

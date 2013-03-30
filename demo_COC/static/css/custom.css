@@ -80,3 +80,10 @@ border-left: 1px solid #ccc;
 height: 100%;
 padding-left: 10px;
 }
+.news {
+	background-color:#E9322D;
+	width:5px;
+	height: 5px;
+	float: right;
+	display: inline-block;
+}

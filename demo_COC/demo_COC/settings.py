@@ -143,6 +143,7 @@ INSTALLED_APPS = (
     'group',
     'reply',
     'sitemail',
+    'find',
 )
 
 # A sample logging configuration. The only tangible logging

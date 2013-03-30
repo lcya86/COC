@@ -32,6 +32,22 @@ class Student(User):
     allbroadcast = fields.ListField(fields.EmbeddedDocumentField(Broadcast))
     alerts = fields.ListField(fields.EmbeddedDocumentField(Broadcast))
     
+   
+    def find_group(self):
+        from relations.models import S_G_Card
+        return S_G_Card.objects(group__nin=self.get_group_all())
+    
+    def find_corporation(self):
+        from relations.models import S_C_Card
+        return S_C_Card.objects(corporation__nin=self.get_corporation_all())
+    
+    def find_topic(self):
+        from topic.models import Topic
+        return Topic.objects(creator__in=self.find_group())
+    
+    def find_activity(self):
+        from activity.models import Activity
+        return Activity.objects(creator__nin=self.get_corporation_active())
     
     
     
@@ -233,6 +249,19 @@ class Student(User):
     def get_outbox(self):
         from sitemail.models import Sitemail
         return Sitemail.objects(creator__in=self.get_sscard_as_user())
+    
+    def get_inbox_not_readed(self):
+        from sitemail.models import Sitemail
+        return Sitemail.objects(creator__in=self.get_sscard_as_target(), is_readed=False)
+
+    def get_inbox_readed(self):
+        from sitemail.models import Sitemail
+        return Sitemail.objects(creator__in=self.get_sscard_as_target(), is_readed=True)
+
+
+
+
+
 
 
 
