@@ -104,6 +104,13 @@
 	</div>
 	<div class="modal-body" style="
 	margin-left: 120px;">
+	{% if form_signup.is_valid %}
+		<div class="alert alert-success">
+		<p>您好，{{ username }}！</p>
+		<p>您的登录密码已经发送到{{ email }}，请查收！</p>
+		<p><a href="/accounts/login/">现在登录</a></p>
+		</div>
+	{% else %}
 		<form class="span3" method="post">
 			{% csrf_token %}
 			<div id="warning">
@@ -152,6 +159,12 @@
 				</button>
 			</div>
 		</form>
+	{% endif %}
+	
+	
+	
+	
+		
 	</div>
 </div>
 {%endblock%}

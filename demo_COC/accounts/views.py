@@ -9,7 +9,7 @@ from models import Student, Public_Profile, Feeds
 from relations.models import S_S_Card
 from django.http import HttpResponseRedirect
 from django.contrib.auth import *
-from forms import AccountsSignupForm, AccountsLoginForm, AccountsModifyProfileForm, NewFeedForm
+from forms import AccountsSignupForm, AccountsLoginForm, AccountsModifyProfileForm, NewFeedForm, AccountsErrorList
 from django.template import RequestContext
 from mongoengine.django.sessions import MongoSession
 from django.contrib.auth.decorators import login_required
@@ -18,8 +18,7 @@ from django.http import HttpResponse
         
 
 def indexsignup(request):
-    form = AccountsSignupForm(request.POST)
-    print form.is_valid()
+    form = AccountsSignupForm(request.POST, error_class=AccountsErrorList)
     if form.is_valid():
         email = form.clean_email()
         password = form.cleaned_data['password']

@@ -13,6 +13,8 @@ from reply.models import Reply
 from reply.forms import NewReplyForm
 from topic.models import Topic
 from topic.forms import NewTopicForm, ModifyTopicForm
+from activity.forms import CreatActivityForm
+from activity.models import Activity
 from relations.models import S_C_Card, S_S_Card
 from django.template import RequestContext
 from mongoengine.django.sessions import MongoSession
@@ -117,6 +119,33 @@ def showtopic(request, gurl_number, turl_number):
         topic.clicks = topic.clicks + 1
         topic.save()
         return render_to_response('corporation/topic_corporation.html', {'corporation':corporation, 'current_user':request.user, 'reply_form':reply_form, 'topic':topic, 'STATIC_URL':STATIC_URL}, context_instance=RequestContext(request))
+
+def showactivity(request, gurl_number, turl_number):
+    corporation = Corporation.objects(url_number=gurl_number).get()
+    activity = Activity.objects(url_number=turl_number).get()
+    if request.method == 'POST':
+        if "reply" in request.POST:
+            reply_form = NewReplyForm(request.POST)
+            if reply_form.is_valid():
+                content = reply_form.cleaned_data['content']
+                reply = Reply(content=content)
+                sccard = S_C_Card.objects(user=request.user, corporation=corporation).get()
+                reply.creator = sccard
+                reply.creat_time = datetime.datetime.now()
+                reply.target = activity
+                reply.is_active = True
+                reply.save()
+                activity.clicks = topic.clicks - 1
+                activity.save()
+                return HttpResponseRedirect('/corporation/' + str(gurl_number) + '/activity/' + str(turl_number) + '/')
+            
+        
+    else:
+        reply_form = NewReplyForm()
+        activity.clicks = activity.clicks + 1
+        activity.save()
+        return render_to_response('corporation/activity_corporation.html', {'corporation':corporation, 'current_user':request.user, 'reply_form':reply_form, 'activity':activity, 'STATIC_URL':STATIC_URL}, context_instance=RequestContext(request))
+
 
     
 def my_corporations_creat(request):
@@ -321,7 +350,24 @@ def ask_quitcorporation(request, url_number):
 
 def visit_corporation_activity(request, url_number):
     corporation = Corporation.objects(url_number=url_number).get()
-    return render_to_response('corporation/corporation_activity.html', {'current_user':request.user, 'url_number':url_number, 'corporation':corporation, 'STATIC_URL':STATIC_URL}, context_instance=RequestContext(request))
+    sccard = S_C_Card.objects(corporation=corporation,user=request.user).get()
+    if request.method == "POST":
+        form = CreatActivityForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            start_time = form.cleaned_data['start_time']
+            finish_time = form.cleaned_data['finish_time']
+            place = form.cleaned_data['place']
+            max_student = form.cleaned_data['max_student']
+            pay = form.cleaned_data['pay']
+            detail = form.cleaned_data['detail']
+            aurl_number = len(Activity.objects) + 1
+            activity = Activity(creator=sccard,url_number=aurl_number,name=name,start_time=start_time,finish_time=finish_time,place=place,max_student=max_student,pay=pay,detail=detail,clicks = 0).save()
+            return HttpResponseRedirect('/corporation/' + str(url_number) + '/activity/' + str(aurl_number) + '/')
+            
+    else:
+        form = CreatActivityForm()
+        return render_to_response('corporation/corporation_activity.html', {'form':form, 'current_user':request.user, 'url_number':url_number, 'corporation':corporation, 'STATIC_URL':STATIC_URL}, context_instance=RequestContext(request))
   
     
 def watch_corporation(request, url_number):

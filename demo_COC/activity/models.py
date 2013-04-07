@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 from mongoengine import Document, fields, PULL
-from corporation.models import Corporation
 from accounts.models import Student
 from mongoengine import signals
 import datetime
@@ -11,11 +10,8 @@ import datetime
 class Activity(Document):
     url_number = fields.IntField()
     name = fields.StringField(verbose_name=u'活动名称')
-    #poster = fields.StringField()  # 活动海报
-    type = fields.StringField(verbose_name=u'活动类型')
-    image = fields.StringField()
     detail = fields.StringField(verbose_name=u'活动详情')
-    creator = fields.ReferenceField(Corporation)  # 发起社团
+    creator = fields.GenericReferenceField() # 发起社团
     
     start_time = fields.DateTimeField()
     finish_time = fields.DateTimeField()
@@ -26,7 +22,6 @@ class Activity(Document):
     
     who_likes = fields.ListField(fields.ReferenceField(Student, reverse_delete_rule=PULL))  # 喜欢活动的人
     who_entered = fields.ListField(fields.ReferenceField(Student, reverse_delete_rule=PULL))  # 参加这个活动的人
-    total_students = fields.IntField()  # 参加活动总人
     clicks = fields.IntField()  # 点击数
     is_active = fields.BooleanField()
     

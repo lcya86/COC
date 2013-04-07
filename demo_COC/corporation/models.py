@@ -161,11 +161,7 @@ class Corporation(Document):
     #查询activity
     def get_activity_active(self):
         from activity.models import Activity
-        return Activity.objects(creator__in=self.get_sccard_active(), is_active=True)
-    
-    def get_activity_inactive(self):
-        from activity.models import Activity
-        return Activity.objects(creator__in=self.get_sccard_active(), is_active=False)
+        return Activity.objects(creator__in=self.get_sccard_active())
     
     
     

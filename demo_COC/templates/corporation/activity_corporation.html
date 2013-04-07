@@ -3,51 +3,23 @@
 
 <div class="row-fluid">
 	<div class="span2">
-	<a class="pull-left" href="/people/{{topic.creator.user.url_number}}/"> <img class="img-polaroid span10" src="{{topic.creator.user.public_profile.face}}"></a>
+	<a class="pull-left" href="/corporation/{{activity.creator.corporation.url_number}}/"> <img class="img-polaroid span10" src="{{activity.creator.corporation.logo}}"></a>
 	</div>
 	<div class="span10 removemarginleft" id="handle_topic">
-		<h3 class="media-heading">{{topic.title}}
-		{%if topic.is_top%}
-		<span class="label label-success">顶</span>
-		{%endif%}
+		<h3 class="media-heading">{{activity.name}}
 		</h3>
-		<a href="/people/{{topic.creator.user.url_number}}/">{{topic.creator.user.public_profile.realname}}</a><small class="muted">&nbsp;&nbsp;&nbsp;{{topic.creat_time|date:"Y-m-d H:i:s"}}</small>	
-		<p>{{topic.content|linebreaksbr}}</p>
+		<a href="/corporation/{{activity.creator.corporation.url_number}}/">{{activity.creator.corporation.name}}</a>	
+		<p>开始时间：{{activity.start_time}}</p>
+		<p>结束时间：{{activity.finish_time}}</P>
+		<p>活动地点：{{activity.place}}</p>
 		<p class="text-right">
-		{%ifequal current_user topic.creator.user%}
-		- <span><button class="btn-link" data-toggle="modal" data-target="#myModifyModal" href="">修改</button></span>
-		{%endifequal%}
-		{%if current_user in corporation.get_user_admin%}
-		- <span><button class="btn-link" id="id_top">
-		 	{%if topic.is_top%}
-		 	取消置顶
-		 	{%else%}
-		 	置顶
-		 	{%endif%}
-		 	</button></span>
-		 
-		  - <span><button class="btn-link" id="id_lock">
-		  	{%if topic.is_locked%}
-		  	取消禁止
-		  	{%else%}
-		  	禁止回应
-		  	{%endif%}
-		  	</button></span>
-		  
-		   - <span><button class="btn btn-link" id="id_active">
-		   	{%if topic.is_active%}
-		   	回收
-		   	{%else%}
-		   	恢复
-		   	{%endif%}
-		   	</button></span>
-		{%endif%}		
+		
 		</p>
 	</div>
 </div>
 
 <div class="row-fluid">
-	{%for reply in topic.get_reply%}
+	{%for reply in activity.get_reply%}
 	<div class="row-fluid">
 		<hr>
 		<a href="/people/{{reply.creator.user.url_number}}/"><div class="span2"><img class="img-polaroid offset2 span8" src="{{reply.creator.user.public_profile.face}}"></div></a>
@@ -68,8 +40,6 @@
 <div class="row-fluid">
 	
 	<div class="span12" id="reply">
-		{%if not topic.is_locked%}
-			{%if current_user in topic.creator.corporation.get_user_active%}
 			<a href="/people/{{current_user.url_number}}/"><div class="span2"><img class="img-polaroid offset2 span8" src="{{current_user.public_profile.face}}"></div></a>
 			<form method="post" class="span8 removemarginleft">
 				{% csrf_token %}
@@ -78,12 +48,6 @@
 				<button type="submit" class="btn btn-primary pull-right">发布</button>
 				<input type="hidden" name="reply" />
 			</form>
-			{%else%}
-			<p>加入社团才能回应</p>
-			{%endif%}
-		{%else%}
-			<h4>该帖子被禁止回复</h4>
-		{%endif%}
 	</div>
 	
 </div>
@@ -113,27 +77,5 @@
 {%endblock%}
 {%block otherscript%}
 <script type="text/javascript" src="{{STATIC_URL}}js/csrf.js"></script>
-<script type="text/javascript">
-	$().ready(function() {
-		$('#id_top').live('click', function() {
-			$.post("{%url topic.views.about_top topic.url_number%}", function() {
-				$('#handle_topic').load(location.href + ' #handle_topic>*');
-			});
-		});
-
-		$('#id_lock').live('click', function() {
-			$.post("{%url topic.views.about_lock topic.url_number%}", function() {
-				$('#handle_topic').load(location.href + ' #handle_topic>*');
-				$('#reply').load(location.href + ' #reply>*');
-			});
-		});
-
-		$('#id_active').live('click', function() {
-			$.post("{%url topic.views.about_active topic.url_number%}", function() {
-				$('#handle_topic').load(location.href + ' #handle_topic>*');
-			});
-		});
-	}); 
-</script>
 
 {%endblock%}

@@ -31,8 +31,7 @@ class Student(User):
     mybroadcast = fields.ListField(fields.EmbeddedDocumentField(Broadcast))
     allbroadcast = fields.ListField(fields.EmbeddedDocumentField(Broadcast))
     alerts = fields.ListField(fields.EmbeddedDocumentField(Broadcast))
-    
-   
+
     def find_group(self):
         from relations.models import S_G_Card
         return S_G_Card.objects(group__nin=self.get_group_all())
@@ -285,7 +284,7 @@ class Student(User):
             for user in document.user.get_fans():
                 user.update(push__allbroadcast=broadcast)
         elif sender == Activity:
-            document.creator.corporation.who_watches.update(push__allbroadcast=broadcast)
+            [user.update(push__allbroadcast=broadcast) for user in document.creator.corporation.who_watches]
         elif sender == Feeds:
             for user in document.user.get_fans():
                 user.update(push__allbroadcast=broadcast)

@@ -10,7 +10,7 @@ class Group(Document):
     birthday = fields.DateTimeField()  # 创建日期
     introduction = fields.StringField(required=True, verbose_name=u'小组介绍')
     # tags = fields.ListField(fields.StringField())#小组标签
-    # school = fields.StringField()
+    school = fields.StringField()
     grouptype = fields.StringField()  # 小组类型，是否为私密小组
     
     #得到各种sgcard
